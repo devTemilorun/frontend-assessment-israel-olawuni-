@@ -10,7 +10,16 @@ export async function getPokemonDetails(nameOrId: string | number): Promise<Poke
   return fetchApi<Pokemon>(`/pokemon/${nameOrId}`);
 }
 
-export async function getPokemonByIds(ids: number[]): Promise<Pokemon[]> {
-  const promises = ids.map(id => getPokemonDetails(id));
-  return Promise.all(promises);
+export async function getPokemonByPage(page: number, limit: number = 20): Promise<Pokemon[]> {
+  const offset = (page - 1) * limit;
+  const list = await getPokemonList(offset, limit);
+  const details = await Promise.all(
+    list.map(pokemon => getPokemonDetails(pokemon.name))
+  );
+  return details;
+}
+
+export async function getTotalCount(): Promise<number> {
+  const data = await fetchApi<PokemonListResponse>('/pokemon?limit=1');
+  return data.count;
 }
