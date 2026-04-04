@@ -1,65 +1,78 @@
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
+import { getPokemonList, getPokemonDetails } from '@/features/pokemon/api/pokemonApi';
+import { Pokemon } from '@/shared/types/pokemon';
 
-export default function Home() {
+// Generate static params for first 20 pokemon (SSG)
+export async function generateStaticParams() {
+  const pokemonList = await getPokemonList(0, 20);
+  return pokemonList.map((p) => ({ name: p.name }));
+}
+
+// Get first 20 pokemon with their details
+async function getInitialPokemon(): Promise<Pokemon[]> {
+  const list = await getPokemonList(0, 20);
+  const details = await Promise.all(
+    list.map(pokemon => getPokemonDetails(pokemon.name))
+  );
+  return details;
+}
+
+export default async function HomePage() {
+  const pokemon = await getInitialPokemon();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <header className="text-center mb-12">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+            Pokédex<span className="text-yellow-400">3000</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-purple-200 text-lg">
+            Explore {pokemon.length}+ Pokémon with glassmorphism magic
           </p>
+        </header>
+
+        {/* Responsive Grid: 1 col mobile, 2 col tablet, 4 col desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {pokemon.map((p, index) => (
+            <Link href={`/pokemon/${p.name}`} key={p.id}>
+              <div className="group relative bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:shadow-2xl cursor-pointer">
+                {/* Priority on first 4 images (above the fold) */}
+                <div className="relative w-full aspect-square mb-3">
+                  <Image
+                    src={p.sprites.other['official-artwork'].front_default}
+                    alt={p.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-contain drop-shadow-xl"
+                    priority={index < 4}
+                  />
+                </div>
+                <h2 className="text-xl font-bold text-white capitalize text-center">
+                  {p.name}
+                </h2>
+                <div className="flex justify-center gap-2 mt-2">
+                  <span className="text-sm text-purple-200">Ht: {p.height / 10}m</span>
+                  <span className="text-sm text-purple-200">Wt: {p.weight / 10}kg</span>
+                </div>
+                {/* Type badges */}
+                <div className="flex justify-center gap-1 mt-2 flex-wrap">
+                  {p.types.map(t => (
+                    <span
+                      key={t.type.name}
+                      className="text-xs px-2 py-0.5 rounded-full bg-black/30 text-white"
+                    >
+                      {t.type.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
