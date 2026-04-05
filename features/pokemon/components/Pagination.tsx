@@ -18,7 +18,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  // Generate page numbers to show (with ellipsis)
+  // Generate page numbers to show 
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     const maxVisible = 5;

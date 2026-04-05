@@ -13,9 +13,12 @@ export async function getPokemonDetails(nameOrId: string | number): Promise<Poke
 export async function getPokemonByPage(page: number, limit: number = 20): Promise<Pokemon[]> {
   const offset = (page - 1) * limit;
   const list = await getPokemonList(offset, limit);
+  
+  // Fetch details for each Pokémon
   const details = await Promise.all(
     list.map(pokemon => getPokemonDetails(pokemon.name))
   );
+  
   return details;
 }
 
