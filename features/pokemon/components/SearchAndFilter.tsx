@@ -34,11 +34,13 @@ export default function SearchAndFilter({ search, selectedType, types }: Props) 
         placeholder="Search Pokémon..."
         defaultValue={search}
         onChange={(e) => handleSearch(e.target.value)}
+          aria-label="Search Pokémon by name"
         className="flex-1 px-4 py-3 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
       />
       <select
         value={selectedType}
         onChange={(e) => updateParams('type', e.target.value)}
+          aria-label="Filter by Pokémon type"
         className="px-4 py-3 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white capitalize focus:outline-none focus:ring-2 focus:ring-yellow-400"
       >
         {types.map(t => (

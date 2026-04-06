@@ -52,6 +52,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       <button
         onClick={() => goToPage(currentPage - 1)}
         disabled={currentPage === 1}
+          aria-label="Previous page"
         className="px-4 py-2 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/20 transition"
       >
         ← Previous
@@ -77,6 +78,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       <button
         onClick={() => goToPage(currentPage + 1)}
         disabled={currentPage === totalPages}
+          aria-label="Next page"
         className="px-4 py-2 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/20 transition"
       >
         Next →

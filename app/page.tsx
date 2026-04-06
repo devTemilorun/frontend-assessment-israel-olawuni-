@@ -73,7 +73,7 @@ export default async function HomePage({
   const hasNoResults = pokemon.length === 0;
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 p-6 md:p-8">
+    <main id="main-content" className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-8">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">

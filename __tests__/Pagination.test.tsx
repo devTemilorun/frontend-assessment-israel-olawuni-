@@ -21,8 +21,18 @@ describe('Pagination', () => {
     expect(nextButton).toBeDisabled();
   });
 
-  it('shows correct page numbers', () => {
+  it('shows current page as active', () => {
     render(<Pagination currentPage={5} totalPages={10} />);
-    expect(screen.getByText('5')).toBeInTheDocument();
+    const activeButton = screen.getByText('5');
+    expect(activeButton).toHaveClass('bg-yellow-500');
+  });
+
+  it('renders correct number of page buttons', () => {
+    render(<Pagination currentPage={5} totalPages={10} />);
+    // Should show: 1 ... 4 5 6 ... 10
+    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('10')).toBeInTheDocument();
+    expect(screen.getByText('4')).toBeInTheDocument();
+    expect(screen.getByText('6')).toBeInTheDocument();
   });
 });
